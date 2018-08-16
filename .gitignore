@@ -17,3 +17,5 @@ __pycache__
 
 server/mnist_test.csv
 server/mnist_train.csv
+
+guesser/compileAndRun.bat

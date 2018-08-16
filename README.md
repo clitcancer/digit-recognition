@@ -2,6 +2,7 @@
 - download https://pjreddie.com/media/files/mnist_test.csv and https://pjreddie.com/media/files/mnist_train.csv 
 - put them into `server/`
 - download go and python
+- download some c++ compiler
 done
 ## server in GO:
 serves data
@@ -18,7 +19,12 @@ serves data
 ---
 
 ## NN in python:
-trains the NN, takes guesses (todo)
+trains the NN
+
+---
+
+## guesser in c++:
+performs guesses using the trained NN
 
 ---
 
@@ -29,4 +35,4 @@ draw, shows guess
 ---
 
 ## flow
-JS drawing -> go server -> python guess -> go server -> browser
+learning python -> JS drawing -> go server -> c++ guess -> go server -> browser
