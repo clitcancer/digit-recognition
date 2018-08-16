@@ -40,6 +40,10 @@ function App() {
 				id={'resetCanvas'}
 				text={'Reset canvas!'}
 			/>
+			<Button
+				id={'saveCanvas'}
+				text={'Save as image!'}
+			/>
 			<GuessBox />
 		</React.Fragment>
 	)

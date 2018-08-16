@@ -93,5 +93,19 @@ function run() {
 		})
 
 		document.querySelector('#resetCanvas').addEventListener('click', clearCanvas)
+
+		document.querySelector('#saveCanvas').addEventListener('click', event => {
+			let img = p.createImage(ENV.imgSize.x, ENV.imgSize.y)
+			let pixels = exportPixelData()
+			img.loadPixels()
+			for (let i = 0; i < img.width; i++) {
+				for (let j = 0; j < img.height; j++) {
+					img.set(i, j, pixels[j][i])
+				}
+			}
+			img.updatePixels()
+			img.save('digit', 'png')
+		})
+		
 	}, 'sketch')
 }
