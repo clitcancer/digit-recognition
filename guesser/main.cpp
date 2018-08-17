@@ -2,8 +2,9 @@
 #include <map>
 #include <fstream>
 #include <string>
-#include <stdlib.h>
 #include "NN.hpp"
+#include "json/json.h"
+
 using namespace std;
 
 bool startsWith(string what, string with)
@@ -31,16 +32,16 @@ map<string, string> getNNInfo(string path)
 					string currVal("");
 
 					int start;
-					for(start = 0; line[start] == '\t' || line[start] == ' '; start++) {}
-					
+					for (start = 0; line[start] == '\t' || line[start] == ' '; start++) {}
+
 					int i;
-					for(i = start; line[i] != ':'; i++) {}
+					for (i = start; line[i] != ':'; i++) {}
 
 					currProp = line.substr(start, i - start);
 
 					i += 2;
 					start = i;
-					for(; line[i] != ' ' && line[i] != '\n' && line[i] != '\t'; i++) {}
+					for (; line[i] != ' ' && line[i] != '\n' && line[i] != '\t'; i++) {}
 
 					currVal = line.substr(start, i - start);
 
@@ -56,7 +57,7 @@ map<string, string> getNNInfo(string path)
 		{
 			int start = 21;
 			int i;
-			for(i = start; line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != '\''; i++) {}
+			for (i = start; line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != '\''; i++){}
 			res["activationFunction"] = line.substr(start, i - start);
 		}
 	}
@@ -65,7 +66,40 @@ map<string, string> getNNInfo(string path)
 	return res;
 }
 
-int main()
+Json::Value loadJson(string path)
 {
-	auto a = getNNInfo("../NN_config.yaml");
+	Json::Value obj;
+	ifstream config_doc(path, ifstream::binary);
+	config_doc >> obj;
+	return obj;
+}
+
+Json::Value parseJson(string json)
+{
+	Json::CharReaderBuilder builder;
+	Json::CharReader *reader = builder.newCharReader();
+
+	Json::Value obj;
+	string errors;
+
+	bool parsingSuccessful = reader->parse(
+			json.c_str(),
+			json.c_str() + json.size(),
+			&obj,
+			&errors);
+	delete reader;
+
+	if (!parsingSuccessful)
+		cout << "Failed to parse the JSON, errors:" << endl << errors << endl;
+	else
+		return obj;
+}
+
+int main(int argc, char *argv[])
+{
+	auto NN_config = getNNInfo("../NN_config.yaml");
+
+	auto brain = loadJson("../brain.json");
+
+	auto inputs = parseJson(argv[1]);
 }
