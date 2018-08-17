@@ -1,11 +1,11 @@
 # NN for digit recognition
 ## index
 - [usage](#usage)
-- [server/](#server%20in%20GO)
-- [trainer/](#NN%20in%20python)
-- [guesser/](#guesser%20in%20c++)
-- [visualisation/](#visualisation%20in%20JavaScript)
-- [why](#why%20so%20many%20languages)
+- [server/](#server-in-go)
+- [trainer/](#nn-in-python)
+- [guesser/](#guesser-in-c++)
+- [visualisation/](#visualisation-in-javascript)
+- [why](#why-so-many-languages)
 ## usage
 ### preset
 - download https://pjreddie.com/media/files/mnist_test.csv and https://pjreddie.com/media/files/mnist_train.csv, put them into `server/`
