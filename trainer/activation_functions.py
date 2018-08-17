@@ -24,5 +24,5 @@ ReLU = ActivationFunction(
 
 smoothReLU = ActivationFunction(
     lambda x: math.log10(1 + math.exp(x)),
-    lambda x: sigmoid.base
+    sigmoid.base
 )
