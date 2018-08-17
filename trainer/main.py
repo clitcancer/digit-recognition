@@ -1,9 +1,9 @@
 import requests
 import itertools
+import yaml
 
 from NN import NN
-from activation_functions import reLu
-from utils import dotDict
+import activation_functions as af
 
 
 def getDigit(n, setType):
@@ -12,19 +12,28 @@ def getDigit(n, setType):
         n=str(n)
     )
     r = requests.get(url=URL)
-    return dotDict(r.json())
+    return r.json()
 
 def from2dto1d(arr):
 	return list(itertools.chain(*arr))
 
+def normalize(inputs, to):
+    return list(map(lambda x: x/to, inputs))
 
-nn = NN(
-    inputsLength=784,
-    outputsLength=10,
-    hiddenLayersLength=2,
-    thicknessLength=16,
-    activation=reLu
-)
-dig = getDigit(123, "test")
 
-print(nn.guess(from2dto1d(dig.pixels)), dig.label)
+if __name__ == '__main__':
+    NN_config = yaml.load(open('../NN_config.yaml'))
+
+    nn = NN(
+        inputsLength=NN_config['lengths']['inputs'],
+        outputsLength=NN_config['lengths']['outputs'],
+        hiddenLayersLength=NN_config['lengths']['hiddenLayers'],
+        thicknessLength=NN_config['lengths']['neuronsPerHiddenLayer'],
+        activation=getattr(af, NN_config['activationFunction'])
+    )
+    nn.load()
+    dig = getDigit(123, "test")
+    inputs = from2dto1d(dig['pixels'])
+    inputs = normalize(inputs, 255)
+
+    print(nn.guess(inputs), dig['label'])

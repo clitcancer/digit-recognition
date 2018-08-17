@@ -1,0 +1,6 @@
+lengths:
+  inputs: 784 # dont touch (unless you know what you're doing)
+  hiddenLayers: 2
+  neuronsPerHiddenLayer: 16
+  outputs: 10 # dont touch (unless you know what you're doing)
+activationFunction: 'sigmoid'
