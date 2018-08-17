@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -41,9 +42,16 @@ func sendGuess(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, jsonify(res))
 }
 
+func sendBrain(w http.ResponseWriter, req *http.Request) {
+	brain, err := ioutil.ReadFile("../brain.json")
+	check(err)
+	fmt.Fprint(w, string(brain))
+}
+
 func statusReport(w http.ResponseWriter, r *http.Request, status int) {
 	w.WriteHeader(status)
-	if status == http.StatusBadRequest {
+	switch status {
+	case http.StatusBadRequest:
 		fmt.Fprint(w, "bad request 400")
 	}
 }
@@ -53,6 +61,7 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("../visualisation/")))
 	http.HandleFunc("/api/getDigit/", sendDigit) // :set/:n
 	http.HandleFunc("/api/guess", sendGuess)
+	http.HandleFunc("/api/data/brain", sendBrain)
 	err := http.ListenAndServe(":"+port, nil)
 	check(err)
 }
