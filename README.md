@@ -3,7 +3,7 @@
 - [usage](#usage)
 - [server/](#server-in-go)
 - [trainer/](#nn-in-python)
-- [guesser/](#guesser-in-c++)
+- [guesser/](#guesser-in-c)
 - [visualisation/](#visualisation-in-javascript)
 - [why](#why-so-many-languages)
 ## usage
