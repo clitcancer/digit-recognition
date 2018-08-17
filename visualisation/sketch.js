@@ -33,6 +33,7 @@ new p5(p => {
 	}
 
 	const drawUnderMouse = () => {
+		if (p.mouseX > p.width || p.mouseY > p.height || p.mouseX < 0 || p.mouseY < 0) return null
 		const scaledGrid = p.createVector(
 			p.mouseX - p.mouseX % ENV.scale.x,
 			p.mouseY - p.mouseY % ENV.scale.y
