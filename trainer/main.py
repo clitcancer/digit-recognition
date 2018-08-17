@@ -22,7 +22,8 @@ def normalize(inputs, to):
 
 
 if __name__ == '__main__':
-    NN_config = yaml.load(open('../NN_config.yaml'))
+    with open('../NN_config.yaml') as f:
+        NN_config = yaml.load(f)
 
     nn = NN(
         inputsLength=NN_config['lengths']['inputs'],
@@ -31,7 +32,7 @@ if __name__ == '__main__':
         thicknessLength=NN_config['lengths']['neuronsPerHiddenLayer'],
         activation=getattr(af, NN_config['activationFunction'])
     )
-    nn.load()
+    nn.load('../brain.json')
     dig = getDigit(123, "test")
     inputs = from2dto1d(dig['pixels'])
     inputs = normalize(inputs, 255)

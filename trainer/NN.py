@@ -34,7 +34,7 @@ class NN:
     def guess(self, inputs):
         wrong = False
         wrong = len(inputs) != self.lengths.inputs or wrong
-        wrong = all(x < 1 and x >= 0 for x in inputs) or wrong
+        wrong = not all(x <= 1 and x >= 0 for x in inputs) or wrong
         if wrong:
             raise Exception('wrong inputs')
 
@@ -72,10 +72,10 @@ class NN:
         sum += self.lengths.outputs * self.lengths.thickness
         return sum
 
-    def save(self):
-        with open('../brain.json', 'w') as f:
+    def save(self, path):
+        with open(path, 'w') as f:
             json.dump(self.weights, f, indent=4)
 
-    def load(self):
-        with open('../brain.json') as f:
+    def load(self, path):
+        with open(path) as f:
             self.weights = json.load(f)
