@@ -1,25 +1,49 @@
 # NN for digit recognition
-- download https://pjreddie.com/media/files/mnist_test.csv and https://pjreddie.com/media/files/mnist_train.csv 
-- put them into `server/`
-- download go and python
-- download some c++ compiler
-done
-## server in GO:
-serves data
+## index
+- [usage](#usage)
+- [server/](#server%20in%20GO)
+- [trainer/](#NN%20in%20python)
+- [guesser/](#guesser%20in%20c++)
+- [visualisation/](#visualisation%20in%20JavaScript)
+- [why](#why%20so%20many%20languages)
+## usage
+### preset
+- download https://pjreddie.com/media/files/mnist_test.csv and https://pjreddie.com/media/files/mnist_train.csv, put them into `server/`
+- download GO, run the `go build` command in `server/`, run the created `.exe`
+- download g++ compiler, run the `g++ *.cpp -o main.exe` command in `guesser/`
+- download python 3.7 (sorry, no env for now)
+### training
+- configure your neural net in the `NN_config.yaml` file
+- in `trainer/` run the `python main.py <epoch_amount>` (TODO)
+### interaction
+- open up `http://localhost:214` in a browser
+
+---
+
+## `server/` in GO:
+serves data, acts as a http server, communicates with other programs. Runs on `http://localhost:214`
 ### GET
 - train/test digit data 
-	- url `/api/:dataSet/:n`
+	- url `/api/getDigit/:dataSet/:n`
 	- returns `{label: int, pixels: int[28][28]}`
 
-- make guess (todo)
-	- url (todo)
-	- expects (todo)
-	- returns (todo)
+- make guess
+	- url `/api/guess`
+	- expects body `{pixels: int[28][28]}`
+	- returns `{guess: int}`
+
+- show brain
+	- url `/api/data/brain`
+	- returns `brain.json`
+
+- static files
+	- url `/`
+	- returns `visualisation/`
 
 ---
 
 ## NN in python:
-trains the NN
+trains and returns the precision of the NN
 
 ---
 
@@ -34,5 +58,5 @@ draw, shows guess
 
 ---
 
-## flow
-learning python -> JS drawing -> go server -> c++ guess -> go server -> browser
+## why so many languages
+for fun, wanted to created a project that isnt full Node.js for once lul
