@@ -97,9 +97,15 @@ Json::Value parseJson(string json)
 
 int main(int argc, char *argv[])
 {
-	auto NN_config = getNNInfo("../NN_config.yaml");
-
 	auto brain = loadJson("../brain.json");
 
 	auto inputs = parseJson(argv[1]);
+	
+	auto NN_config = getNNInfo("../NN_config.yaml");
+
+	int guess = NNGuess(brain, inputs, NN_config);
+
+
+	system("pause");
+
 }
