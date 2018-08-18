@@ -41,24 +41,21 @@ class NN:
         # inputs
         sums = [0 for x in range(self.lengths.thickness)]
         for i, node in enumerate(self.weights[0]):
-            for j, weight in enumerate(node):
-                sums[i] += (inputs[j] * weight)
+            sums[i] = sum(input*weight for input, weight in zip(inputs, node))
             sums[i] = self.activation(sums[i])
 
         # hidden
         for n in range(self.lengths.hiddenLayers-1):
             temp = [0 for x in range(self.lengths.thickness)]
             for i, node in enumerate(self.weights[1+n]):
-                for j, weight in enumerate(node):
-                    temp[i] += (sums[j] * weight)
+                temp[i] = sum(sum_*weight for sum_, weight in zip(sums, node))
                 temp[i] = self.activation(temp[i])
             sums = [*temp]
 
         # output
         results = [0 for x in range(self.lengths.outputs)]
         for i, node in enumerate(self.weights[len(self.weights)-1]):
-            for j, weight in enumerate(node):
-                results[i] += (sums[j] * weight)
+            results[i] = sum(sum_*weight for sum_, weight in zip(sums, node))
 
         return results.index(max(*results))
 
