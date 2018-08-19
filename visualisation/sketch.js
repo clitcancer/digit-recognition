@@ -85,7 +85,7 @@ new p5(p => {
 		fetch('/api/guess', {
 			method: 'POST',
 			body: JSON.stringify({
-				pixels: exportPixelData()
+				pixels: exportPixelData().reduce((prev, curr) => [...prev, ...curr], []).map(e => e/255)
 			})
 		}).then(res => res.json())
 			.then(body => document.querySelector('#guess').innerText = body.guess)

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -32,12 +34,22 @@ func sendGuess(w http.ResponseWriter, req *http.Request) {
 	type Response struct {
 		Guess int `json:"guess"`
 	}
-	// body, err := ioutil.ReadAll(req.Body)
-	// check(err)
-	// bodyData := mappify(string(body))
-	// fmt.Println(bodyData["Pixels"])
 
-	res := Response{Guess: 2}
+	body, err := ioutil.ReadAll(req.Body)
+	check(err)
+	bodyData := mappify(string(body))
+	squishedNormalizedPixels := jsonify(bodyData["pixels"])
+
+	cmd := exec.Command("..\\guesser\\main.exe", squishedNormalizedPixels)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err = cmd.Run()
+	check(err)
+
+	answer, err := strconv.Atoi(out.String())
+	check(err)
+
+	res := Response{Guess: answer}
 
 	fmt.Fprint(w, jsonify(res))
 }
