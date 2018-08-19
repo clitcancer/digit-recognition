@@ -45,21 +45,37 @@ int NNGuess(Json::Value weights, Json::Value inputs, map<string, string> NN_conf
     activation(&sums[i]);
   }
 
-  //       # hidden
-  //       for n in range(self.lengths.hiddenLayers-1):
-  //           temp = [0 for x in range(self.lengths.thickness)]
-  //           for i, node in enumerate(self.weights[1+n]):
-  //               for j, weight in enumerate(node):
-  //                   temp[i] += (sums[j] * weight)
-  //               temp[i] = self.activation(temp[i])
-  //           sums = [*temp]
+  // hidden
+  for (int n = 1; n < atoi(NN_config["hiddenLayers"].c_str()); n++)
+  {
+    auto temp = emptyVector(atoi(NN_config["neuronsPerHiddenLayer"].c_str()));
+    for (int i = 0; i < temp.size(); i++)
+    {
+      for (int j = 0; j < atoi(NN_config["neuronsPerHiddenLayer"].c_str()); j++)
+        temp[i] += (sums[j] * weights[n][i][j].asDouble());
+      activation(&temp[i]);
+    }
+    for(int a = 0; a < temp.size(); a++)
+      sums[a] = temp[a];
+  }
 
-  //       # output
-  //       results = [0 for x in range(self.lengths.outputs)]
-  //       for i, node in enumerate(self.weights[len(self.weights)-1]):
-  //           for j, weight in enumerate(node):
-  //               results[i] += (sums[j] * weight)
+  // output
+  auto results = emptyVector(atoi(NN_config["outputs"].c_str()));
+  for (int i = 0; i < results.size(); i++)
+  {
+    for (int j = 0; j < sums.size(); j++)
+      results[i] += (sums[j] * weights[atoi(NN_config["hiddenLayers"].c_str())][i][j].asDouble());
+  }
 
-  //       return results.index(max(*results))
-  return 1;
+  // result
+  double best = -100000.0;
+  int hisIndex = -1;
+  for(int i = 0; i < results.size(); i++) {
+    if(results[i] > best) {
+      best = results[i];
+      hisIndex = i;
+    }
+  }
+
+  return hisIndex;
 }

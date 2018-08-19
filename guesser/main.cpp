@@ -105,7 +105,5 @@ int main(int argc, char *argv[])
 
 	int guess = NNGuess(brain, inputs, NN_config);
 
-
-	system("pause");
-
+	cout << guess;
 }
