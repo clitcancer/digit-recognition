@@ -3,7 +3,6 @@ import itertools
 import yaml
 import sys
 import random
-import decimal
 from math import floor
 
 from NN import NN
@@ -11,7 +10,7 @@ import activation_functions as af
 
 
 def getDigit(n, setType):
-    URL = "http://localhost:214/api/getDigit/{setType}/{n}".format(
+    URL = 'http://localhost:214/api/getDigit/{setType}/{n}'.format(
         setType=setType,
         n=str(n)
     )
@@ -25,6 +24,11 @@ def from2dto1d(arr):
 
 def normalize(inputs, to):
     return list(map(lambda x: x/to, inputs))
+
+
+def printProgress(progress):
+    print(' [' + '█'*(floor(progress*10)) + ' '*(floor(10 - progress*10)) + ']',
+          str(round(progress*100, 1)) + '%', end='\r')
 
 
 if __name__ == '__main__':
@@ -43,13 +47,22 @@ if __name__ == '__main__':
     print('Training...')
     epoches = int(sys.argv[1])
     for n in range(epoches):
-        dig = getDigit(random.randint(1, 60000), "train")
+        dig = getDigit(random.randint(1, 60000), 'train')
         inputs = from2dto1d(dig['pixels'])
         inputs = normalize(inputs, 255)
         nn.guess(inputs)
 
-        progress = (n+1)/epoches
-        print('[' + '█'*(floor(progress*10)) + '_'*(floor(10 - progress*10)) + ']', 
-        str(round(progress*100, 1)) + '%', end='\r')
-
+        printProgress((n+1)/epoches)
     print('Done training! Time for tests.')
+
+    print('Testing...')
+    testAmount = 1000
+    correctAmount = 0
+    for n in range(testAmount):
+        dig = getDigit(random.randint(1, 10000), 'test')
+        inputs = from2dto1d(dig['pixels'])
+        inputs = normalize(inputs, 255)
+        correctAmount += int(int(nn.guess(inputs)) == int(dig['label']))
+
+        printProgress((n+1)/testAmount)
+    print('Done testing! {accuracy}% accuracy.'.format(accuracy=round(correctAmount/testAmount*100, 1)))
