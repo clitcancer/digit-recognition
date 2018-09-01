@@ -32,7 +32,7 @@ func getActivationFunction(string name)
     return [](double *x) { *x = 1.0 / (1.0 + exp(-*x)); };
 };
 
-int NNGuess(Json::Value weights, Json::Value inputs, map<string, string> NN_config)
+int NNGuess(Json::Value weights, Json::Value biases, Json::Value inputs, map<string, string> NN_config)
 {
   auto activation = getActivationFunction(NN_config["activationFunction"]);
 
@@ -42,6 +42,7 @@ int NNGuess(Json::Value weights, Json::Value inputs, map<string, string> NN_conf
   {
     for (int j = 0; j < atoi(NN_config["inputs"].c_str()); j++)
       sums[i] += (inputs[j].asDouble() * weights[0][i][j].asDouble());
+    sums[i] += biases[0][i].asDouble();
     activation(&sums[i]);
   }
 
@@ -53,6 +54,7 @@ int NNGuess(Json::Value weights, Json::Value inputs, map<string, string> NN_conf
     {
       for (int j = 0; j < atoi(NN_config["neuronsPerHiddenLayer"].c_str()); j++)
         temp[i] += (sums[j] * weights[n][i][j].asDouble());
+      temp[i] += biases[n][i].asDouble();
       activation(&temp[i]);
     }
     for(int a = 0; a < temp.size(); a++)
@@ -64,7 +66,7 @@ int NNGuess(Json::Value weights, Json::Value inputs, map<string, string> NN_conf
   for (int i = 0; i < results.size(); i++)
   {
     for (int j = 0; j < sums.size(); j++)
-      results[i] += (sums[j] * weights[atoi(NN_config["hiddenLayers"].c_str())][i][j].asDouble());
+      results[i] += (sums[j] * weights[atoi(NN_config["hiddenLayers"].c_str())][i][j].asDouble() + biases[atoi(NN_config["hiddenLayers"].c_str())][i].asDouble());
   }
 
   // result

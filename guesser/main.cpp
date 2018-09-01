@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 	
 	auto NN_config = getNNInfo("../NN_config.yaml");
 
-	int guess = NNGuess(brain, inputs, NN_config);
+	int guess = NNGuess(brain["weights"], brain["biases"], inputs, NN_config);
 
 	cout << guess;
 }
