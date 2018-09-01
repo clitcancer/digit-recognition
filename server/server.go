@@ -27,7 +27,8 @@ func sendDigit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprint(w, jsonify(getNth(n, params[len(params)-2]))) // write response to ResponseWriter (w)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, jsonify(getNth(n, params[len(params)-2])))
 }
 
 func sendGuess(w http.ResponseWriter, req *http.Request) {
@@ -51,12 +52,15 @@ func sendGuess(w http.ResponseWriter, req *http.Request) {
 
 	res := Response{Guess: answer}
 
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, jsonify(res))
 }
 
 func sendBrain(w http.ResponseWriter, req *http.Request) {
 	brain, err := ioutil.ReadFile("../brain.json")
 	check(err)
+
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(brain))
 }
 
