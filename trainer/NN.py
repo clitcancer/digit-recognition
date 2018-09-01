@@ -88,4 +88,3 @@ class NN:
             obj = json.load(f)
             self.weights = obj['weights']
             self.biases = obj['biases']
-            print(self.biases[2][9])
