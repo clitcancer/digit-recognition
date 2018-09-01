@@ -1,21 +1,38 @@
-import requests
 import itertools
 import yaml
 import sys
 import random
+import aiohttp
+import asyncio
 from math import floor
 
 from NN import NN
 import activation_functions as af
 
 
-def getDigit(n, setType):
-    URL = 'http://localhost:214/api/getDigit/{setType}/{n}'.format(
-        setType=setType,
-        n=str(n)
-    )
-    res = requests.get(url=URL)
-    return res.json()
+def getDigits(amount, dataset):
+    digits = []
+    base_url = 'http://localhost:214/api/getDigit'
+
+    maxs = {
+        'train': 60000,
+        'test': 10000
+    }
+
+    async def httpJsonGet(url):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                digits.append(await response.json())
+
+    urls = [
+        asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount)
+    ]
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(urls))
+
+    return digits
+            
 
 
 def from2dto1d(arr):
@@ -44,25 +61,29 @@ if __name__ == '__main__':
     )
     nn.load('../brain.json')
 
+    print('Fetching digits data...')
+    nDigits = int(sys.argv[1])
+    digits = {
+        'train': getDigits(nDigits, 'train'),
+        'test': getDigits(10, 'test')
+    }
+    print('Done fetching! Time for training.')
+
     print('Training...')
-    epoches = int(sys.argv[1])
-    for n in range(epoches):
-        dig = getDigit(random.randint(1, 60000), 'train')
+    for n, dig in enumerate(digits['train']):
         inputs = from2dto1d(dig['pixels'])
         inputs = normalize(inputs, 255)
         nn.guess(inputs)
 
-        printProgress((n+1)/epoches)
+        printProgress((n+1)/len(digits['train']))
     print('Done training! Time for tests.')
 
     print('Testing...')
-    testAmount = 1000
     correctAmount = 0
-    for n in range(testAmount):
-        dig = getDigit(random.randint(1, 10000), 'test')
+    for n, dig in enumerate(digits['test']):
         inputs = from2dto1d(dig['pixels'])
         inputs = normalize(inputs, 255)
         correctAmount += int(int(nn.guess(inputs)) == int(dig['label']))
 
-        printProgress((n+1)/testAmount)
-    print('Done testing! {accuracy}% accuracy.'.format(accuracy=round(correctAmount/testAmount*100, 1)))
+        printProgress((n+1)/len(digits['test']))
+    print('Done testing! {accuracy}% accuracy.'.format(accuracy=round(correctAmount/len(digits['test'])*100, 1)))
