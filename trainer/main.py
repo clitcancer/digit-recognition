@@ -20,16 +20,30 @@ def getDigits(amount, dataset):
     }
 
     async def httpJsonGet(url):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=60)) as session:
+            async with session.get(url, timeout=None) as response:
                 digits.append(await response.json())
 
-    urls = [
-        asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount)
-    ]
+    fetchesPerBatch = 62
+    fetched = 0
+    while fetched <= amount - fetchesPerBatch:
+        printProgress(fetched/amount)
 
+        urls = [
+            asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(fetchesPerBatch)
+        ]
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(asyncio.wait(urls))
+        fetched += fetchesPerBatch
+
+
+    printProgress(fetched/amount)
+    urls = [
+        asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount - fetched)
+    ]
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(urls))
+
 
     return digits
             
@@ -62,10 +76,10 @@ if __name__ == '__main__':
     nn.load('../brain.json')
 
     print('Fetching digits data...')
-    nDigits = int(sys.argv[1])
+    epoches = int(sys.argv[1])
     digits = {
-        'train': getDigits(nDigits, 'train'),
-        'test': getDigits(10, 'test')
+        'train': getDigits(epoches, 'train'),
+        'test': getDigits(1000, 'test')
     }
     print('Done fetching! Time for training.')
 
