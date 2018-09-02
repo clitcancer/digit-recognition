@@ -14,7 +14,7 @@ bool startsWith(string what, string with)
 
 map<string, string> getNNInfo(string path)
 {
-	// yes, thats a lot of hardcoding, coudnt be bothered
+	// yes, thats a lot of hardcoding, couldnt be bothered
 	map<string, string> res;
 
 	ifstream f;
@@ -60,6 +60,13 @@ map<string, string> getNNInfo(string path)
 			for (i = start; line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != '\''; i++){}
 			res["activationFunction"] = line.substr(start, i - start);
 		}
+		if (startsWith(line, "learningRate:"))
+		{
+			int start = 14;
+			int i;
+			for (i = start; line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != '\''; i++){}
+			res["learningRate"] = line.substr(start, i - start);
+		}
 	}
 	f.close();
 
@@ -99,9 +106,9 @@ int main(int argc, char *argv[])
 {
 	auto brain = loadJson("../brain.json");
 
-	auto inputs = parseJson(argv[1]);
-	
 	auto NN_config = getNNInfo("../NN_config.yaml");
+	
+	auto inputs = parseJson(argv[1]);
 
 	int guess = NNGuess(brain["weights"], brain["biases"], inputs, NN_config);
 

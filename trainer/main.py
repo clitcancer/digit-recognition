@@ -71,7 +71,8 @@ if __name__ == '__main__':
         outputsLength=NN_config['lengths']['outputs'],
         hiddenLayersLength=NN_config['lengths']['hiddenLayers'],
         thicknessLength=NN_config['lengths']['neuronsPerHiddenLayer'],
-        activation=getattr(af, NN_config['activationFunction'])
+        activation=getattr(af, NN_config['activationFunction']),
+        learningRate=NN_config['learningRate']
     )
     nn.load('../brain.json')
 

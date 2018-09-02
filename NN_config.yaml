@@ -3,4 +3,5 @@ lengths:
   hiddenLayers: 2
   neuronsPerHiddenLayer: 16
   outputs: 10 # dont touch (unless you know what you're doing)
-activationFunction: 'sigmoid'
+activationFunction: 'ReLU'
+learningRate: 0.1

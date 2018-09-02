@@ -11,7 +11,7 @@ class NetworkLengths:
 
 
 class NN:
-    def __init__(self, inputsLength, outputsLength, hiddenLayersLength, thicknessLength, activation):
+    def __init__(self, inputsLength, outputsLength, hiddenLayersLength, thicknessLength, activation, learningRate):
         self.lengths = NetworkLengths(
             inputsLength,
             outputsLength,
@@ -19,6 +19,8 @@ class NN:
             thicknessLength
         )
 
+        self.setLearningRate(learningRate)
+        
         self.activation = activation.base
         self.activationDerivative = activation.derivative
 
@@ -64,6 +66,9 @@ class NN:
             results[i] = sum(sum_*weight for sum_, weight in zip(sums, node)) + self.biases[len(self.biases)-1][i]
 
         return results.index(max(*results))
+
+    def setLearningRate(self, lr):
+        self.learningRate = lr
 
     def nodeCount(self):
         return self.lengths.inputs + self.lengths.outputs + self.lengths.hiddenLayers*self.lengths.thickness
