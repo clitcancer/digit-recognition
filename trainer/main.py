@@ -1,9 +1,9 @@
-import itertools
 import yaml
 import sys
 import random
 import aiohttp
 import asyncio
+import numpy as np
 from math import floor
 
 from NN import NN
@@ -48,15 +48,6 @@ def getDigits(amount, dataset):
     return digits
             
 
-
-def from2dto1d(arr):
-    return list(itertools.chain(*arr))
-
-
-def normalize(inputs, to):
-    return list(map(lambda x: x/to, inputs))
-
-
 def printProgress(progress):
     print(' [' + '█'*(floor(progress*10)) + ' '*(floor(10 - progress*10)) + ']',
           str(round(progress*100, 1)) + '%', end='\r')
@@ -86,8 +77,8 @@ if __name__ == '__main__':
 
     print('Training...')
     for n, dig in enumerate(digits['train']):
-        inputs = from2dto1d(dig['pixels'])
-        inputs = normalize(inputs, 255)
+        inputs = np.array(dig['pixels']).flatten() * 1.0
+        inputs /= 255.0
         nn.guess(inputs)
 
         printProgress((n+1)/len(digits['train']))
@@ -96,8 +87,8 @@ if __name__ == '__main__':
     print('Testing...')
     correctAmount = 0
     for n, dig in enumerate(digits['test']):
-        inputs = from2dto1d(dig['pixels'])
-        inputs = normalize(inputs, 255)
+        inputs = np.array(dig['pixels']).flatten() * 1.0
+        inputs /= 255.0
         correctAmount += int(int(nn.guess(inputs)) == int(dig['label']))
 
         printProgress((n+1)/len(digits['test']))

@@ -1,5 +1,6 @@
 import random
 import json
+import numpy as np
 
 
 class NetworkLengths:
@@ -24,20 +25,20 @@ class NN:
         self.activation = activation.base
         self.activationDerivative = activation.derivative
 
-        self.weights = [
+        self.weights = np.array([
             [[random.random() for x in range(inputsLength)]
              for x in range(thicknessLength)],
             *[[[random.random() for x in range(thicknessLength)]
                for x in range(thicknessLength)] for x in range(hiddenLayersLength-1)],
             [[random.random() for x in range(thicknessLength)]
              for x in range(outputsLength)]
-        ]
+        ])
 
-        self.biases = [
+        self.biases = np.array([
             *[[random.random() for x in range(thicknessLength)]
               for x in range(hiddenLayersLength)],
             [random.random() for x in range(outputsLength)]
-        ]
+        ])
 
     def feedforward(self, inputs):
         wrong = False
@@ -46,30 +47,33 @@ class NN:
         if wrong:
             raise Exception('wrong inputs')
 
-        # inputs
-        sums = [0 for x in range(self.lengths.thickness)]
-        for i, node in enumerate(self.weights[0]):
-            sums[i] = sum(input*weight for input, weight in zip(inputs, node))
-            sums[i] = self.activation(sums[i] + self.biases[0][i])
+        inputs = np.array(inputs)
+
+        # input
+        sums = np.matmul(self.weights[0], inputs) + self.biases[0]
+        sums = np.array(list(map(self.activation, sums)))
 
         # hidden
         for n in range(self.lengths.hiddenLayers-1):
-            temp = [0 for x in range(self.lengths.thickness)]
-            for i, node in enumerate(self.weights[n+1]):
-                temp[i] = sum(sum_*weight for sum_, weight in zip(sums, node))
-                temp[i] = self.activation(temp[i] + self.biases[n+1][i])
-            sums = [*temp]
+            temp = np.matmul(self.weights[n+1], sums) + self.biases[n+1]
+            temp = np.array(list(map(self.activation, temp)))
+            sums = np.array(temp)
 
         # output
-        results = [0 for x in range(self.lengths.outputs)]
-        for i, node in enumerate(self.weights[len(self.weights)-1]):
-            results[i] = sum(sum_*weight for sum_, weight in zip(sums, node)) + self.biases[len(self.biases)-1][i]
+        results = np.matmul(self.weights[-1], sums) + self.biases[-1]
 
         return results
 
     def guess(self, inputs):
         results = self.feedforward(inputs)
-        return results.index(max(*results))
+        return np.argmax(results)
+
+    @staticmethod
+    def softmax(arr):
+        arr -= arr.max()
+
+        e_x = np.exp(arr - np.max(arr))
+        return e_x / e_x.sum(axis=0)
 
     def setLearningRate(self, lr):
         self.learningRate = lr
@@ -95,5 +99,5 @@ class NN:
     def load(self, path):
         with open(path) as f:
             obj = json.load(f)
-            self.weights = obj['weights']
-            self.biases = obj['biases']
+            self.weights = np.array(obj['weights'])
+            self.biases = np.array(obj['biases'])
