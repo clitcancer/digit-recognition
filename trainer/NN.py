@@ -39,7 +39,7 @@ class NN:
             [random.random() for x in range(outputsLength)]
         ]
 
-    def guess(self, inputs):
+    def feedforward(self, inputs):
         wrong = False
         wrong = len(inputs) != self.lengths.inputs or wrong
         wrong = not all(x <= 1 and x >= 0 for x in inputs) or wrong
@@ -65,6 +65,10 @@ class NN:
         for i, node in enumerate(self.weights[len(self.weights)-1]):
             results[i] = sum(sum_*weight for sum_, weight in zip(sums, node)) + self.biases[len(self.biases)-1][i]
 
+        return results
+
+    def guess(self, inputs):
+        results = self.feedforward(inputs)
         return results.index(max(*results))
 
     def setLearningRate(self, lr):
