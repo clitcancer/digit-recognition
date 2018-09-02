@@ -8,10 +8,18 @@
 - [why](#why)
 ## usage
 ### preset
+
 - download https://pjreddie.com/media/files/mnist_test.csv and https://pjreddie.com/media/files/mnist_train.csv, put them into `server/`
-- download GO, run the `go build` command in `server/`, run the created `.exe`
-- download g++ compiler, run the `g++ *.cpp -o main.exe` command in `guesser/`
+- download [GO](https://golang.org/dl/)
+- download g++ compiler
 - download python 3.7 (sorry, no env for now)
+
+### installing
+- run the `install.sh` file, if fails do the manual way:
+	- run the `go build` command in `server/`, run the created `.exe`
+	- run the `g++ *.cpp -o main.exe` command in `guesser/`
+	- download these python packages: `pyyaml` and `aiohttp`
+
 ### training
 - configure your neural net in the `NN_config.yaml` file
 - in `trainer/` run the `python main.py <epoch_amount>`
@@ -62,4 +70,4 @@ draw, shows guess
 ### so many languages
 for fun, wanted to created a project that for once isnt full Node.js lul
 ### is training so slow
-because it has to fetch data of a digit from the GO server which has to compute it. I valued more languages over efficiency
+because it has to fetch data of a digit from the GO server which has to compute it. I valued multiple languages over efficiency
