@@ -1,0 +1,22 @@
+#sketch > canvas {
+	position: fixed;
+	top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#msg {
+	position: fixed;
+	top: 70%;
+  left: 50%;
+	transform: translate(-50%, -50%);
+	font-family: 'Century Gothic';
+}
+
+body {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
