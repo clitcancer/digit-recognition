@@ -10,6 +10,17 @@ class NetworkLengths:
         self.hiddenLayers = hiddenLayers
         self.thickness = thickness
 
+class Biases:
+    def __init__(self, hidden, output):
+        self.hidden = hidden
+        self.output = output
+
+class Weights:
+    def __init__(self, inputs, hidden, output):
+        self.inputs = inputs
+        self.hidden = hidden
+        self.output = output
+
 
 class NN:
     def __init__(self, inputsLength, outputsLength, hiddenLayersLength, thicknessLength, activation, learningRate):
@@ -25,20 +36,16 @@ class NN:
         self.activation = activation.base
         self.activationDerivative = activation.derivative
 
-        self.weights = np.array([
-            [[random.random() for x in range(inputsLength)]
-             for x in range(thicknessLength)],
-            *[[[random.random() for x in range(thicknessLength)]
-               for x in range(thicknessLength)] for x in range(hiddenLayersLength-1)],
-            [[random.random() for x in range(thicknessLength)]
-             for x in range(outputsLength)]
-        ])
-
-        self.biases = np.array([
-            *[[random.random() for x in range(thicknessLength)]
-              for x in range(hiddenLayersLength)],
-            [random.random() for x in range(outputsLength)]
-        ])
+        self.weights = Weights(
+            inputs=np.random.rand(thicknessLength, inputsLength),
+            hidden=np.random.rand(hiddenLayersLength-1, thicknessLength, thicknessLength),
+            output=np.random.rand(outputsLength, thicknessLength)
+        )
+        
+        self.biases = Biases(
+            hidden=np.random.rand(hiddenLayersLength, thicknessLength),
+            output=np.random.rand(outputsLength)
+        )
 
     def feedforward(self, inputs):
         wrong = False
@@ -50,17 +57,17 @@ class NN:
         inputs = np.array(inputs)
 
         # input
-        sums = np.matmul(self.weights[0], inputs) + self.biases[0]
+        sums = np.matmul(self.weights.inputs, inputs) + self.biases.hidden[0]
         sums = np.array(list(map(self.activation, sums)))
 
         # hidden
         for n in range(self.lengths.hiddenLayers-1):
-            temp = np.matmul(self.weights[n+1], sums) + self.biases[n+1]
+            temp = np.matmul(self.weights.hidden[n], sums) + self.biases.hidden[n+1]
             temp = np.array(list(map(self.activation, temp)))
             sums = np.array(temp)
-
+        
         # output
-        results = np.matmul(self.weights[-1], sums) + self.biases[-1]
+        results = np.matmul(self.weights.output, sums) + self.biases.output
 
         return results
 
@@ -91,13 +98,27 @@ class NN:
     def save(self, path):
         with open(path, 'w') as f:
             obj = {
-                'weights': self.weights,
-                'biases': self.biases
+                'weights': [
+                    self.weights.inputs.tolist(),
+                    *self.weights.hidden.tolist(),
+                    self.weights.output.tolist()
+                ],
+                'biases': [
+                    *self.biases.hidden.tolist(), 
+                    self.biases.output.tolist()
+                ]
             }
             json.dump(obj, f, indent=4)
 
     def load(self, path):
         with open(path) as f:
             obj = json.load(f)
-            self.weights = np.array(obj['weights'])
-            self.biases = np.array(obj['biases'])
+            self.weights = Weights(
+                inputs=np.array(obj['weights'][0]),
+                hidden=np.array(obj['weights'][1:-1]),
+                output=np.array(obj['weights'][-1])
+            )
+            self.biases = Biases(
+                hidden=np.array(obj['biases'][:-1]),
+                output=np.array(obj['biases'][-1])
+            )
