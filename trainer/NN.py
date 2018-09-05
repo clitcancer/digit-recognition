@@ -1,6 +1,7 @@
 import random
 import json
 import numpy as np
+from functools import reduce
 
 
 class NetworkLengths:
@@ -75,6 +76,21 @@ class NN:
         results = self.feedforward(inputs)
         return np.argmax(results)
 
+    # def train(self, inputs, targets):
+    #     inputs = np.array(inputs)
+    #     targets = np.array(targets)
+    #     outputs = self.feedforward(inputs)
+
+    #     outputError = targets - outputs
+
+    #     hiddenError = [outputError - np.array([1, 3, 4])]
+
+    #     # for i in range(self.lengths.hiddenLayers):
+
+
+
+    #     error = 
+
     @staticmethod
     def softmax(arr):
         arr -= arr.max()
@@ -89,11 +105,16 @@ class NN:
         return self.lengths.inputs + self.lengths.outputs + self.lengths.hiddenLayers*self.lengths.thickness
 
     def weightCount(self):
-        sum = self.lengths.inputs * self.lengths.thickness
-        for _ in range(self.lengths.hiddenLayers-1):
-            sum += (self.lengths.thickness ** 2)
-        sum += self.lengths.outputs * self.lengths.thickness
-        return sum
+        def multAll(tpl):
+            return reduce(lambda prev, curr: prev*curr, tpl)
+
+        total = multAll(self.weights.inputs.shape)
+        total += multAll(self.weights.hidden.shape)
+        total += multAll(self.weights.output.shape)
+
+        total += multAll(self.biases.hidden.shape)
+        total += multAll(self.biases.output.shape)
+        return total
 
     def save(self, path):
         with open(path, 'w') as f:
