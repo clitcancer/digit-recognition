@@ -1,4 +1,3 @@
-import random
 import json
 import numpy as np
 from functools import reduce
@@ -35,17 +34,17 @@ class NN:
         self.setLearningRate(learningRate)
         
         self.activation = activation.base
-        self.activationDerivative = activation.derivative
+        self.activationPrime = activation.prime
 
         self.weights = Weights(
-            inputs=np.random.rand(thicknessLength, inputsLength),
-            hidden=np.random.rand(hiddenLayersLength-1, thicknessLength, thicknessLength),
-            output=np.random.rand(outputsLength, thicknessLength)
+            inputs=np.random.randn(thicknessLength, inputsLength),
+            hidden=np.random.randn(hiddenLayersLength-1, thicknessLength, thicknessLength),
+            output=np.random.randn(outputsLength, thicknessLength)
         )
         
         self.biases = Biases(
-            hidden=np.random.rand(hiddenLayersLength, thicknessLength),
-            output=np.random.rand(outputsLength)
+            hidden=np.random.randn(hiddenLayersLength, thicknessLength),
+            output=np.random.randn(outputsLength)
         )
 
     def feedforward(self, inputs):
@@ -55,20 +54,27 @@ class NN:
         if wrong:
             raise Exception('wrong inputs')
 
+        self.nodeSave = []
+
         inputs = np.array(inputs)
+        self.nodeSave.append(np.array(inputs))
+
 
         # input
         sums = np.matmul(self.weights.inputs, inputs) + self.biases.hidden[0]
         sums = np.array(list(map(self.activation, sums)))
-
+        self.nodeSave.append(np.array(sums))
+        
         # hidden
         for n in range(self.lengths.hiddenLayers-1):
             temp = np.matmul(self.weights.hidden[n], sums) + self.biases.hidden[n+1]
             temp = np.array(list(map(self.activation, temp)))
             sums = np.array(temp)
+            self.nodeSave.append(np.array(sums))
         
         # output
         results = np.matmul(self.weights.output, sums) + self.biases.output
+        results = NN.softmax(results)
 
         return results
 
@@ -76,20 +82,57 @@ class NN:
         results = self.feedforward(inputs)
         return np.argmax(results)
 
-    # def train(self, inputs, targets):
-    #     inputs = np.array(inputs)
-    #     targets = np.array(targets)
-    #     outputs = self.feedforward(inputs)
+    def backpropagate(self, inputs, targets, outputs):
+        inputs = np.array(inputs)
+        targets = np.array(targets)
+        outputs = np.array(outputs)
 
-    #     outputError = targets - outputs
+        network_loss = np.sum(((targets - outputs)**2) / 2)
 
-    #     hiddenError = [outputError - np.array([1, 3, 4])]
+        # output adjustment data
+        outputError = targets - outputs
 
-    #     # for i in range(self.lengths.hiddenLayers):
+        outputGradients = np.array(list(map(self.activationPrime, outputs)))
+        outputGradients *= self.learningRate
+        outputGradients *= outputError
+
+        outputDeltas = np.dot(outputGradients[:,None], self.nodeSave[-1][None])
 
 
+        # hidden adjustment data
+        hiddenDeltas = []
+        hiddenGradients = []
+        for n in range(self.lengths.hiddenLayers):
+            if n is 0:
+                hiddenError = outputGradients.dot(self.weights.output)
+            else:
+                hiddenError = hiddenGradient.dot(self.weights.hidden[-n])
 
-    #     error = 
+            hiddenGradient = np.array(list(map(self.activationPrime, self.nodeSave[-n-1])))
+            hiddenGradient *= self.learningRate
+            hiddenGradient *= hiddenError
+            hiddenGradients.append(hiddenGradient)
+
+            hiddenDeltas.append(np.dot(hiddenGradient[:,None], self.nodeSave[-n-2][None]))
+
+        # adjust weights
+        self.weights.output += outputDeltas
+        for n in range(self.lengths.hiddenLayers-1):
+            self.weights.hidden[-n-1] += hiddenDeltas[n]
+        self.weights.inputs += hiddenDeltas[-1]
+
+        # adjust biases
+        self.biases.output += outputGradients
+        self.biases.hidden += np.flip(hiddenGradients, axis=0)
+
+
+        return network_loss
+
+    def train(self, inputs, targets):
+        outputs = self.feedforward(inputs)
+        loss = self.backpropagate(inputs, targets, outputs)
+        return loss
+        
 
     @staticmethod
     def softmax(arr):
