@@ -56,21 +56,21 @@ class NN:
 
         self.nodeSave = []
 
-        inputs = np.array(inputs)
-        self.nodeSave.append(np.array(inputs))
+        inputs = np.array(inputs, 'float64')
+        self.nodeSave.append(np.array(inputs, 'float64'))
 
 
         # input
         sums = np.matmul(self.weights.inputs, inputs) + self.biases.hidden[0]
-        sums = np.array(list(map(self.activation, sums)))
-        self.nodeSave.append(np.array(sums))
+        sums = np.array(list(map(self.activation, sums)), 'float64')
+        self.nodeSave.append(np.array(sums, 'float64'))
         
         # hidden
         for n in range(self.lengths.hiddenLayers-1):
             temp = np.matmul(self.weights.hidden[n], sums) + self.biases.hidden[n+1]
-            temp = np.array(list(map(self.activation, temp)))
-            sums = np.array(temp)
-            self.nodeSave.append(np.array(sums))
+            temp = np.array(list(map(self.activation, temp)), 'float64')
+            sums = np.array(temp, 'float64')
+            self.nodeSave.append(np.array(sums, 'float64'))
         
         # output
         results = np.matmul(self.weights.output, sums) + self.biases.output
@@ -83,16 +83,16 @@ class NN:
         return np.argmax(results)
 
     def backpropagate(self, inputs, targets, outputs):
-        inputs = np.array(inputs)
-        targets = np.array(targets)
-        outputs = np.array(outputs)
+        inputs = np.array(inputs, 'float64')
+        targets = np.array(targets, 'float64')
+        outputs = np.array(outputs, 'float64')
 
         network_loss = np.sum(((targets - outputs)**2) / 2)
 
         # output adjustment data
         outputError = targets - outputs
 
-        outputGradients = np.array(list(map(self.activationPrime, outputs)))
+        outputGradients = np.array(list(map(self.activationPrime, outputs)), 'float64')
         outputGradients *= self.learningRate
         outputGradients *= outputError
 
@@ -108,7 +108,7 @@ class NN:
             else:
                 hiddenError = hiddenGradient.dot(self.weights.hidden[-n])
 
-            hiddenGradient = np.array(list(map(self.activationPrime, self.nodeSave[-n-1])))
+            hiddenGradient = np.array(list(map(self.activationPrime, self.nodeSave[-n-1])), 'float64')
             hiddenGradient *= self.learningRate
             hiddenGradient *= hiddenError
             hiddenGradients.append(hiddenGradient)
