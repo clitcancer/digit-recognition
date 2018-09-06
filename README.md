@@ -4,7 +4,7 @@
 - [server/](#server-in-go)
 - [trainer/](#nn-in-python)
 - [guesser/](#guesser-in-c)
-- [visualisation/](#visualisation-in-javascript)
+- [interaction/](#interaction-in-javascript)
 - [why](#why)
 ## usage
 ### preset
@@ -46,7 +46,7 @@ serves data, acts as a http server, communicates with other programs. Runs on `h
 
 - static files
 	- url `/`
-	- returns `visualisation/`
+	- returns `interaction/`
 
 ---
 
@@ -60,7 +60,7 @@ performs guesses using the trained NN
 
 ---
 
-## visualisation in JavaScript
+## interaction in JavaScript
 upload pics, shows guess
 draw, shows guess
 

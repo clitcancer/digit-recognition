@@ -74,7 +74,7 @@ func statusReport(w http.ResponseWriter, r *http.Request, status int) {
 
 func main() {
 	port := "214"
-	http.Handle("/", http.FileServer(http.Dir("../visualisation/")))
+	http.Handle("/", http.FileServer(http.Dir("../interaction/")))
 	http.HandleFunc("/api/getDigit/", sendDigit) // :set/:n
 	http.HandleFunc("/api/guess", sendGuess)
 	http.HandleFunc("/api/data/brain", sendBrain)
