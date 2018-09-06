@@ -1,0 +1,3 @@
+guesser/jsoncpp.cpp linguist-vendored=false
+guesser/json/json.h linguist-vendored=false
+guesser/json/json-forwards.h linguist-vendored=false
