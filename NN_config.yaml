@@ -4,4 +4,4 @@ lengths:
   neuronsPerHiddenLayer: 16
   outputs: 10 # dont touch (unless you know what you're doing)
 activationFunction: 'sigmoid'
-learningRate: 0.1
+learningRate: 0.01

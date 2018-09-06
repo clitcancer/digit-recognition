@@ -79,10 +79,14 @@ if __name__ == '__main__':
     for n, dig in enumerate(digits['train']):
         inputs = np.array(dig['pixels']).flatten() * 1.0
         inputs /= 255.0
-        nn.guess(inputs)
+        target = np.arange(10)*0.0
+        target[int(dig['label'])] = 1.0
+        nn.train(inputs, target)
 
         printProgress((n+1)/len(digits['train']))
     print('Done training! Time for tests.')
+
+    nn.save('../brain.json')
 
     print('Testing...')
     correctAmount = 0
