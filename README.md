@@ -5,6 +5,7 @@
 - [trainer/](#nn-in-python)
 - [guesser/](#guesser-in-c)
 - [interaction/](#interaction-in-javascript)
+- [visualisation/](#visualisation-in-java)
 - [why](#why)
 ## usage
 ### preset
@@ -16,15 +17,19 @@
 
 ### installing
 - run the `install.sh` file, if fails do the manual way:
-	- run the `go build` command in `server/`, run the created `.exe`
+	- run the `go build` command in `server/`
 	- run the `g++ *.cpp -o main.exe` command in `guesser/`
 	- download these python packages: `pyyaml` and `aiohttp`
 
 ### training
+- run the go server: `server/server.exe`
 - configure your neural net in the `NN_config.yaml` file
 - in `trainer/` run the `python main.py <epoch_amount>`
 ### interaction
+- run the go server: `server/server.exe`
 - open up `http://localhost:214` in a browser
+### visualisation
+- run the processing sketch (TODO)
 
 ---
 
@@ -51,7 +56,7 @@ serves data, acts as a http server, communicates with other programs. Runs on `h
 ---
 
 ## NN in python:
-trains and returns the precision of the NN
+trains the NN, logs its loss and precision
 
 ---
 
@@ -63,6 +68,12 @@ performs guesses using the trained NN
 ## interaction in JavaScript
 upload pics, shows guess
 draw, shows guess
+
+---
+
+## visualisation in Java
+Draws graphs using the data during the training sessions
+
 
 ---
 
