@@ -27,6 +27,7 @@
 - in `trainer/` run the `python main.py <epoch_amount>`
 	- flags:
 		- `--verbose`: detailed print
+		- `--stats`: prints out a JSON containing data about the training session
 ### interaction
 - run the go server: `server/server.exe`
 - open up `http://localhost:214` in a browser

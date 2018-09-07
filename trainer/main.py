@@ -1,5 +1,6 @@
 import asyncio
 import builtins
+import json
 from math import floor
 import random
 import sys
@@ -81,12 +82,13 @@ if __name__ == '__main__':
     print('Done fetching! Time for training.')
 
     print('Training...')
+    losses = np.array([], dtype='float64')
     for n, dig in enumerate(digits['train']):
         inputs = np.array(dig['pixels']).flatten() * 1.0
         inputs /= 255.0
         target = np.arange(10)*0.0
         target[int(dig['label'])] = 1.0
-        nn.train(inputs, target)
+        losses = np.append(losses, nn.train(inputs, target))
 
         print_progress((n+1)/len(digits['train']))
     print('Done training! Time for tests.')
@@ -94,12 +96,22 @@ if __name__ == '__main__':
     nn.save('../brain.json')
 
     print('Testing...')
-    correctAmount = 0
+    correct_amount = 0
     for n, dig in enumerate(digits['test']):
         inputs = np.array(dig['pixels']).flatten() * 1.0
         inputs /= 255.0
-        correctAmount += int(int(nn.guess(inputs)) == int(dig['label']))
+        correct_amount += int(int(nn.guess(inputs)) == int(dig['label']))
 
         print_progress((n+1)/len(digits['test']))
+    accuracy = correct_amount/len(digits['test'])
     print('Done testing! {accuracy}% accuracy.'.format(
-        accuracy=round(correctAmount/len(digits['test'])*100, 1)))
+        accuracy=round(accuracy*100, 1)))
+
+    if '--stats' in sys.argv:
+        builtins.print(json.dumps({
+            'accuracy': accuracy,
+            'avrgLoss': np.average(losses),
+            'activationFunc': NN_config['activationFunction'],
+            'epoches': epoches,
+            'learningRate': NN_config['learningRate']
+        }))
