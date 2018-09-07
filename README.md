@@ -28,6 +28,7 @@
 	- flags:
 		- `--verbose`: detailed print
 		- `--stats`: prints out a JSON containing data about the training session
+		- `--reset`: Neural Network wont load the `brain.json` file, will train a new NN
 ### interaction
 - run the go server: `server/server.exe`
 - open up `http://localhost:214` in a browser

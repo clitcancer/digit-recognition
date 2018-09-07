@@ -71,7 +71,8 @@ if __name__ == '__main__':
         activation=getattr(af, NN_config['activationFunction']),
         learningRate=NN_config['learningRate']
     )
-    nn.load('../brain.json')
+    if not '--reset' in sys.argv:
+        nn.load('../brain.json')
 
     print('Fetching digits data...')
     epoches = int(sys.argv[1])
