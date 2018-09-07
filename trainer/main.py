@@ -17,7 +17,7 @@ def print(*args, **kwargs):
         builtins.print(*args, **kwargs)
 
 
-def getDigits(amount, dataset):
+def get_digits(amount, dataset):
     digits = []
     base_url = 'http://localhost:214/api/getDigit'
 
@@ -26,36 +26,34 @@ def getDigits(amount, dataset):
         'test': 10000
     }
 
-    async def httpJsonGet(url):
+    async def http_json_get(url):
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=60)) as session:
             async with session.get(url, timeout=None) as response:
                 digits.append(await response.json())
 
-    fetchesPerBatch = 62
+    fetches_per_batch = 62
     fetched = 0
-    while fetched <= amount - fetchesPerBatch:
-        printProgress(fetched/amount)
+    while fetched <= amount - fetches_per_batch:
+        print_progress(fetched/amount)
 
         urls = [
-            asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(fetchesPerBatch)
+            asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(fetches_per_batch)
         ]
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(urls))
-        fetched += fetchesPerBatch
+        fetched += fetches_per_batch
 
-
-    printProgress(fetched/amount)
+    print_progress(fetched/amount)
     urls = [
-        asyncio.ensure_future(httpJsonGet(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount - fetched)
+        asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount - fetched)
     ]
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(urls))
 
-
     return digits
-            
 
-def printProgress(progress):
+
+def print_progress(progress):
     print(' [' + '█'*(floor(progress*10)) + ' '*(floor(10 - progress*10)) + ']',
           str(round(progress*100, 1)) + '%', end='\r')
 
@@ -77,8 +75,8 @@ if __name__ == '__main__':
     print('Fetching digits data...')
     epoches = int(sys.argv[1])
     digits = {
-        'train': getDigits(epoches, 'train'),
-        'test': getDigits(1000, 'test')
+        'train': get_digits(epoches, 'train'),
+        'test': get_digits(1000, 'test')
     }
     print('Done fetching! Time for training.')
 
@@ -90,7 +88,7 @@ if __name__ == '__main__':
         target[int(dig['label'])] = 1.0
         nn.train(inputs, target)
 
-        printProgress((n+1)/len(digits['train']))
+        print_progress((n+1)/len(digits['train']))
     print('Done training! Time for tests.')
 
     nn.save('../brain.json')
@@ -102,5 +100,6 @@ if __name__ == '__main__':
         inputs /= 255.0
         correctAmount += int(int(nn.guess(inputs)) == int(dig['label']))
 
-        printProgress((n+1)/len(digits['test']))
-    print('Done testing! {accuracy}% accuracy.'.format(accuracy=round(correctAmount/len(digits['test'])*100, 1)))
+        print_progress((n+1)/len(digits['test']))
+    print('Done testing! {accuracy}% accuracy.'.format(
+        accuracy=round(correctAmount/len(digits['test'])*100, 1)))
