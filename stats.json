@@ -1,0 +1,26 @@
+{
+	"ReLU": {
+		"0.1": [
+			{
+				"accuracy": 0.06213,
+				"avrgLoss": 0.5232492340,
+				"epoches": 1000
+			},
+			{
+				"accuracy": 0.10213,
+				"avrgLoss": 0.462492340,
+				"epoches": 1000
+			},
+			{
+				"accuracy": 0.1613,
+				"avrgLoss": 0.40132492340,
+				"epoches": 1000
+			},
+			{
+				"accuracy": 0.2213,
+				"avrgLoss": 0.332492340,
+				"epoches": 1000
+			}
+		]
+	}
+}
