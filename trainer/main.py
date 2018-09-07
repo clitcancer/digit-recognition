@@ -1,13 +1,20 @@
-import yaml
-import sys
-import random
-import aiohttp
 import asyncio
-import numpy as np
+import builtins
 from math import floor
+import random
+import sys
 
-from NN import NN
+import aiohttp
+import numpy as np
+import yaml
+
 import activation_functions as af
+from NN import NN
+
+
+def print(*args, **kwargs):
+    if '--verbose' in sys.argv:
+        builtins.print(*args, **kwargs)
 
 
 def getDigits(amount, dataset):
