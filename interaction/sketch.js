@@ -17,37 +17,28 @@ new p5(p => {
 	const clearCanvas = () => p.background(0)
 
 	const exportPixelData = () => {
-		p.loadPixels()
-		if (!p.pixels.length) throw Error('Pixels arent loaded')
+		let copy = ENV.canvas.get() 
+		copy.resize(ENV.imgSize.x, ENV.imgSize.y)
+
+		copy.loadPixels()
 		let pixels = []
-		for (let i = 0; i < p.width; i += ENV.scale.x) {
+		for (let i = 0; i < copy.width; i++) {
 			pixels.push([])
-			for (let j = 0; j < p.height; j += ENV.scale.y) {
-				const pixelIndex = (i * p.width + j) * 4
-				const [r, g, b] = p.pixels.slice(pixelIndex, pixelIndex + 3)
-				pixels[i / ENV.scale.x][j / ENV.scale.y] = (r + g + b) / 3
+			for (let j = 0; j < copy.height; j++) {
+				const pixelIndex = (i * copy.width + j) * 4
+				const [r, g, b] = copy.pixels.slice(pixelIndex, pixelIndex + 3)
+				pixels[i][j] = (r + g + b) / 3
 			}
 		}
-		p.updatePixels()
-		return pixels
+		copy.updatePixels()
+		return pixels.reduce((prev, curr) => [...prev, ...curr], []).map(e => e/255)
 	}
 
-	const drawUnderMouse = () => {
-		if (p.mouseX > p.width || p.mouseY > p.height || p.mouseX < 0 || p.mouseY < 0) return null
-		const scaledGrid = p.createVector(
-			p.mouseX - p.mouseX % ENV.scale.x,
-			p.mouseY - p.mouseY % ENV.scale.y
-		)
-		p.loadPixels()
-		for (let i = scaledGrid.x; i < scaledGrid.x + ENV.scale.x; i++) {
-			for (let j = scaledGrid.y; j < scaledGrid.y + ENV.scale.y; j++) {
-				const pixelIndex = (j * p.width + i) * 4
-				p.pixels[pixelIndex] = 255
-				p.pixels[pixelIndex + 1] = 255
-				p.pixels[pixelIndex + 2] = 255
-			}
+	p.draw = () => {
+		if(p.mouseIsPressed) {
+			p.noStroke()
+			p.ellipse(p.mouseX, p.mouseY, ENV.scale.x, ENV.scale.y);
 		}
-		p.updatePixels()
 	}
 
 	const fileOver = () => {
@@ -78,14 +69,11 @@ new p5(p => {
 		context.drawImage(image, 0, 0, image.width * ENV.scale.x, image.height * ENV.scale.y)
 	}
 
-	p.mouseDragged = drawUnderMouse
-	p.mousePressed = drawUnderMouse
-
 	document.querySelector('#takeGuess').addEventListener('click', event => {
 		fetch('/api/guess', {
 			method: 'POST',
 			body: JSON.stringify({
-				pixels: exportPixelData().reduce((prev, curr) => [...prev, ...curr], []).map(e => e/255)
+				pixels: exportPixelData()
 			})
 		}).then(res => res.json())
 			.then(body => document.querySelector('#guess').innerText = body.guess)
@@ -95,15 +83,8 @@ new p5(p => {
 	document.querySelector('#resetCanvas').addEventListener('click', clearCanvas)
 
 	document.querySelector('#saveCanvas').addEventListener('click', event => {
-		let img = p.createImage(ENV.imgSize.x, ENV.imgSize.y)
-		let pixels = exportPixelData()
-		img.loadPixels()
-		for (let i = 0; i < img.width; i++) {
-			for (let j = 0; j < img.height; j++) {
-				img.set(i, j, pixels[j][i])
-			}
-		}
-		img.updatePixels()
+		let img = ENV.canvas.get()
+		img.resize(ENV.imgSize.x, ENV.imgSize.y)
 		img.save('digit', 'png')
 	})
 
