@@ -7,7 +7,7 @@ class Graph {
   float avrgLossSum, accuracySum, epocheSum;
   float avrgLossMax, accuracyMax, epocheMax;
   float avrgLossMin, accuracyMin, epocheMin;
-  
+
   float pxPerEpoche;
 
   Graph(ArrayList<HashMap<String, Float>> data) {
@@ -48,11 +48,12 @@ class Graph {
       accuracy[i] = data.get(i).get("accuracy");
       epoche[i] = data.get(i).get("epoches");
     }
-    
+
     pxPerEpoche = width / this.epocheSum;
   }
 
   void drawAvrgLoss() {
+    pushStyle();
     stroke(66, 134, 244);
     strokeWeight(3);
     noFill();
@@ -64,15 +65,25 @@ class Graph {
     curveVertex(0, height - height*this.avrgLoss[0]);
     for (int i = 0; i < this.length; i++) {
       currEpoches += this.epoche[i];
-      curveVertex(currEpoches*pxPerEpoche, height - this.avrgLoss[i]*height);
+      float x = currEpoches*pxPerEpoche - 50;
+      float y = height - this.avrgLoss[i]*height;
       
+      pushStyle();
+      stroke(150, 100);
+      strokeWeight(2);
+      line(x, y, x, height - 23);
+      popStyle();
+      
+      curveVertex(x, y);
     }
     curveVertex(width, height - height*this.avrgLoss[this.length-1]);
 
     endShape();
+    popStyle();
   }
-  
+
   void drawAccuracy() {
+    pushStyle();
     stroke(66, 244, 92);
     strokeWeight(3);
     noFill();
@@ -84,11 +95,38 @@ class Graph {
     curveVertex(0, height - height*this.accuracy[0]);
     for (int i = 0; i < this.length; i++) {
       currEpoches += this.epoche[i];
-      curveVertex(currEpoches*pxPerEpoche, height - this.accuracy[i]*height);
       
+      float x = currEpoches*pxPerEpoche - 50;
+      float y = height - this.accuracy[i]*height;
+      
+      pushStyle();
+      stroke(150, 100);
+      strokeWeight(2);
+      line(x, y, x, height - 23);
+      popStyle();
+      
+      curveVertex(x, y);
     }
     curveVertex(width, height - height*this.accuracy[this.length-1]);
-    
+
     endShape();
+    popStyle();
+  }
+
+
+  void drawLegend() {
+    pushStyle();
+    fill(255);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+
+    int currEpoches = 0;
+
+    for (int i = 0; i < this.length; i++) {
+      currEpoches += this.epoche[i];
+      text(currEpoches/1000 + "k", currEpoches*pxPerEpoche - 50, height - 15);
+    }
+
+    popStyle();
   }
 }

@@ -34,6 +34,12 @@
 - open up `http://localhost:214` in a browser
 ### visualisation
 - run the processing sketch (TODO)
+	- <span style="color: rgb(66, 134, 244)">blue</span> line is for average loss
+	- <span style="color: rgb(66, 244, 92)">green</span> line is for testing accuracy
+	- bottom legend is for epoches passed
+
+
+
 
 ---
 

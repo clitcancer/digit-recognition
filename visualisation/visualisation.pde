@@ -6,7 +6,7 @@ int currStep = 0;
 
 
 void setup() {
-  size(1000, 500);
+  size(1500, 750);
   //fullScreen();
   textAlign(CENTER, CENTER);
   textSize(32);
@@ -31,6 +31,7 @@ void draw() {
   default:
     graph.drawAvrgLoss();
     graph.drawAccuracy();
+    graph.drawLegend();
   }
 }
 
