@@ -20,6 +20,26 @@
 				"accuracy": 0.2213,
 				"avrgLoss": 0.332492340,
 				"epoches": 1000
+			},
+			{
+				"accuracy": 0.3613,
+				"avrgLoss": 0.332492340,
+				"epoches": 1000
+			},
+			{
+				"accuracy": 0.5113,
+				"avrgLoss": 0.332492340,
+				"epoches": 1000
+			},
+			{
+				"accuracy": 0.8013,
+				"avrgLoss": 0.332492340,
+				"epoches": 10000
+			},
+			{
+				"accuracy": 0.9513,
+				"avrgLoss": 0.332492340,
+				"epoches": 1000
 			}
 		]
 	}

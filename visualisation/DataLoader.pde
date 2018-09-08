@@ -4,6 +4,7 @@ class DataLoader {
   JSONObject data;
   JSONObject actData;
   JSONArray lrData;
+  ArrayList<HashMap<String, Float>> stats;
 
   DataLoader(String path) {
     data = loadJSONObject(path);
@@ -19,10 +20,11 @@ class DataLoader {
       throw new Error("You need to load the activation first.");
 
     lrData = actData.getJSONArray(rate);
+    if(lrData != null) this.fetchData();
     return lrData != null;
   }
 
-  ArrayList<HashMap<String, Float>> getData() {
+  void fetchData() {
     if (lrData == null)
       throw new Error("You need to load the learning rate first.");
 
@@ -43,6 +45,6 @@ class DataLoader {
     catch (Exception e) {
     }
 
-    return res;
+    stats = res;
   }
 }
