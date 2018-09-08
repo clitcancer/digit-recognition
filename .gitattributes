@@ -1,3 +1,5 @@
 guesser/jsoncpp.cpp linguist-vendored=true
 guesser/json/json.h linguist-vendored=true
 guesser/json/json-forwards.h linguist-vendored=true
+
+interaction/lib linguist-vendored=true
