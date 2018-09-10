@@ -4,15 +4,6 @@ import (
 	"encoding/json"
 )
 
-// Digit stores the data related to a single mnist digit
-type Digit struct {
-	Label  int        `json:"label"`
-	Pixels PixelArray `json:"pixels"`
-}
-
-// PixelArray correct size of the digit pixel array
-type PixelArray [28][28]int
-
 func check(e error) {
 	if e != nil {
 		panic(e)

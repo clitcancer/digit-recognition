@@ -38,7 +38,7 @@ def get_digits(amount, dataset):
         print_progress(fetched/amount)
 
         urls = [
-            asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(fetches_per_batch)
+            asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(0, maxs[dataset]-1)}')) for x in range(fetches_per_batch)
         ]
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(urls))
@@ -46,7 +46,7 @@ def get_digits(amount, dataset):
 
     print_progress(fetched/amount)
     urls = [
-        asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(1, maxs[dataset])}')) for x in range(amount - fetched)
+        asyncio.ensure_future(http_json_get(f'{base_url}/{dataset}/{random.randint(0, maxs[dataset]-1)}')) for x in range(amount - fetched)
     ]
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(urls))
