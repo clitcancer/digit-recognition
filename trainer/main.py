@@ -108,11 +108,25 @@ if __name__ == '__main__':
     print('Done testing! {accuracy}% accuracy.'.format(
         accuracy=round(accuracy*100, 1)))
 
-    if '--stats' in sys.argv:
-        builtins.print(json.dumps({
+    if '--save-stats' in sys.argv:
+        with open('../stats.json') as f:
+            obj = json.load(f)
+
+        tosave = {
             'accuracy': accuracy,
             'avrgLoss': np.average(losses),
-            'activationFunc': NN_config['activationFunction'],
-            'epoches': epoches,
-            'learningRate': NN_config['learningRate']
-        }))
+            'epoches': epoches
+        }
+        if NN_config['activationFunction'] in obj:
+            if str(NN_config['learningRate']) in obj[NN_config['activationFunction']]:
+                obj[NN_config['activationFunction']
+                    ][str(NN_config['learningRate'])].append(tosave)
+            else:
+                obj[NN_config['activationFunction']
+                    ][str(NN_config['learningRate'])] = [tosave]
+        else:
+            obj[NN_config['activationFunction']] = {}
+            obj[NN_config['activationFunction']
+                ][str(NN_config['learningRate'])] = [tosave]
+        with open('../stats.json', 'w') as f:
+            json.dump(obj, f, indent=4)

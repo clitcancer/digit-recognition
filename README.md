@@ -27,7 +27,7 @@
 - in `trainer/` run the `python main.py <epoch_amount>`
 	- flags:
 		- `--verbose`: detailed print
-		- `--stats`: prints out a JSON containing data about the training session
+		- `--save-stats`: saves to `stats.json` data about the training session
 		- `--reset`: Neural Network wont load the `brain.json` file, will train a new NN
 ### interaction
 - run the go server: `server/server.exe`
