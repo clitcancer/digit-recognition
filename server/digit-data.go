@@ -15,12 +15,12 @@ type DigitData struct {
 
 // Digit stores the data related to a single mnist digit
 type Digit struct {
-	Label  int        `json:"label"`
+	Label  uint8      `json:"label"`
 	Pixels PixelArray `json:"pixels"`
 }
 
 // PixelArray correct size of the digit pixel array
-type PixelArray [28][28]int
+type PixelArray [28][28]uint8
 
 func (d DigitData) setExists(name string) bool {
 	return name == "train" || name == "test"
@@ -42,10 +42,10 @@ func (d *DigitData) loadData() {
 			for j := range d.train[i].Pixels[i] {
 				currVal, err := strconv.Atoi(data[i*len(d.train[n].Pixels[i])+j+1])
 				check(err)
-				d.train[n].Pixels[i][j] = currVal
+				d.train[n].Pixels[i][j] = uint8(currVal)
 			}
 		}
-		d.train[n].Label = label
+		d.train[n].Label = uint8(label)
 	}
 
 	f, err = os.Open("mnist_test.csv")
@@ -62,10 +62,10 @@ func (d *DigitData) loadData() {
 			for j := range d.test[i].Pixels[i] {
 				currVal, err := strconv.Atoi(data[i*len(d.test[n].Pixels[i])+j+1])
 				check(err)
-				d.test[n].Pixels[i][j] = currVal
+				d.test[n].Pixels[i][j] = uint8(currVal)
 			}
 		}
-		d.test[n].Label = label
+		d.test[n].Label = uint8(label)
 	}
 
 }
