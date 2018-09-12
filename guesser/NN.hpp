@@ -66,7 +66,8 @@ int NNGuess(Json::Value weights, Json::Value biases, Json::Value inputs, map<str
   for (int i = 0; i < results.size(); i++)
   {
     for (int j = 0; j < sums.size(); j++)
-      results[i] += (sums[j] * weights[atoi(NN_config["hiddenLayers"].c_str())][i][j].asDouble() + biases[atoi(NN_config["hiddenLayers"].c_str())][i].asDouble());
+      results[i] += sums[j] * weights[atoi(NN_config["hiddenLayers"].c_str())][i][j].asDouble();
+    results[i] += biases[atoi(NN_config["hiddenLayers"].c_str())][i].asDouble();
   }
 
   // result
