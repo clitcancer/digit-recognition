@@ -37,7 +37,7 @@ new p5(p => {
 	p.draw = () => {
 		if(p.mouseIsPressed) {
 			p.noStroke()
-			p.ellipse(p.mouseX, p.mouseY, ENV.scale.x, ENV.scale.y);
+			p.ellipse(p.mouseX, p.mouseY, ENV.scale.x*2, ENV.scale.y*2);
 		}
 	}
 
