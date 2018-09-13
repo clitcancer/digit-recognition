@@ -92,7 +92,7 @@ class NN:
         # output adjustment data
         outputError = targets - outputs
 
-        outputGradients = np.array(list(map(self.activationPrime, outputs)), 'float64')
+        outputGradients = np.array(NN.softmaxPrime(outputs), 'float64')
         outputGradients *= self.learningRate
         outputGradients *= outputError
 
@@ -140,6 +140,10 @@ class NN:
 
         e_x = np.exp(arr - np.max(arr))
         return e_x / e_x.sum(axis=0)
+
+    @staticmethod
+    def softmaxPrime(arrY):
+        return arrY * (-arrY + 1)
 
     def setLearningRate(self, lr):
         self.learningRate = lr
